@@ -10,7 +10,7 @@ const playerLogic = (function (){
         return markedCells[index] === false;
     };
 
-    function makeMove(index, marker) {
+    function makePlayerMove(index, marker) {
         if (!isCellEmpty(index)) { 
             return;
         } 
@@ -59,37 +59,15 @@ const playerLogic = (function (){
         markedCells.fill(false);
     };
 
-    function findBestMove(board, computerMarker) {
-        let bestMove = -1;
-        let bestScore = -Infinity;
-
-        for (let i = 0; i < board.length; i++) {
-            if (board[i] === "") {
-                board[i] = computerMarker;
-                const score = minimax(board, 0, false);
-                board[i] = "";
-
-                if (score > bestScore) {
-                    bestScore = score;
-                    bestMove = i;
-                }
-            }
-        }
-
-        return bestMove;
-    };
-
     return {
-        makeMove,
+        makePlayerMove,
         getGameBoardArray,
         checkForWin,
         checkForTie,
         checkForWinOrTie,
-        resetGame,
-        findBestMove
+        resetGame
     };
 })();
-
 
 const computerLogic = (function () {
     const boardElements = document.querySelectorAll(".cell");
@@ -102,20 +80,17 @@ const computerLogic = (function () {
             const selectedCellIndex = emptyCells[randomIndex];
             const computerMarker = initializeGame.getCurrentPlayer().marker; 
 
-            gameController.handleCellSelection(boardElements[selectedCellIndex], selectedCellIndex, { name: "Computer", marker: computerMarker });
-        }
-    };
-
-    function makeComputerMoveMinimax() {
-        const bestMove = playerLogic.findBestMove(playerLogic.getGameBoardArray(), computerMarker);
-        // Update the game board and UI with the best move
+            if (boardElements[selectedCellIndex].textContent === "") {
+                gameController.handleCellSelection(boardElements[selectedCellIndex], selectedCellIndex, { name: "Computer", marker: computerMarker });
+            }
+        };
     };
 
     return {
-        makeComputerMove,
-        makeComputerMoveMinimax
+        makeComputerMove
     };
 })();
+
 
 const initializeGame = (function() {
     const player = { name: "", marker: "" };
@@ -176,19 +151,6 @@ const gameController = (function() {
         const clickedCell = event.target;
         const cellIndex = Number(clickedCell.getAttribute("data-index"));
         const currentPlayer = initializeGame.getCurrentPlayer();
-
-        if (currentPlayer.name === "Computer") {
-            if (difficultyLevel === "easy") {
-                computerLogic.makeComputerMove(); // Basic AI
-            } else if (difficultyLevel === "hard") {
-                computerLogic.makeComputerMoveMinimax(); // Minimax AI
-            }
-        }
-
-       /*  if (currentPlayer.name === "Computer") {
-            computerLogic.makeComputerMove();
-            return;
-        }     */
         
         handleCellSelection(clickedCell, cellIndex, currentPlayer);
     };
@@ -198,22 +160,23 @@ const gameController = (function() {
             return;
         }
 
-        cell.textContent = player.marker;
-        playerLogic.makeMove(index, player.marker);
+        if (cell.textContent === "") {
+            cell.textContent = player.marker;
+            playerLogic.makePlayerMove(index, player.marker);
 
-        initializeGame.switchPlayer();
+            initializeGame.switchPlayer();
 
-        const result = playerLogic.checkForWinOrTie();
-        if (result.result === "win") {
-            gamePresentation.showGameResult(player.name, false);
-            initializeGame.setGameOver(true);
-        } else if (result.result === "tie") {
-            gamePresentation.showGameResult(null, true);
-            initializeGame.setGameOver(true);
-        } else if (initializeGame.getCurrentPlayer().name === "Computer") {
-            computerLogic.makeComputerMove();
+            const result = playerLogic.checkForWinOrTie();
+
+            if (result.result === "win") {
+                gamePresentation.showGameResult(player.name, false);initializeGame.setGameOver(true);
+            } else if (result.result === "tie") {
+                gamePresentation.showGameResult(null, true);
+                initializeGame.setGameOver(true);
+            }else if (initializeGame.getCurrentPlayer().name === "Computer") {
+                computerLogic.makeComputerMove(); 
+            } 
         }
-
     };
 
     function handleRestartButtonClick() {
@@ -262,12 +225,12 @@ const gamePresentation = (function () {
         boardElements.forEach((cell) => {
             cell.textContent = "";
         });
-    }
+    };
 
     function clearResultMessageUI() {
         const resultMessage = document.querySelector(".result-message");
         resultMessage.textContent = "";
-    }
+    };
 
     function clearPlayerInputsUI() {
         const playerNameInput = document.querySelector("#player-name");
@@ -275,12 +238,12 @@ const gamePresentation = (function () {
 
         const playerXMarker = document.querySelector("#player-x");
         const playerOMarker = document.querySelector("#player-o");
-    }
+    };
 
     function showGameSetupUI() {
         const gameSetupElement = document.querySelector("#game-setup");
         gameSetupElement.style.visibility = "visible";
-    }
+    };
 
     return {
         showGameResult,
@@ -299,16 +262,27 @@ const playerInputController = (function() {
 
     function startGameClick() {
         const playerName = playerNameInput.value.trim();
-        const playerMarker = document.querySelector('input[name="player-marker"]:checked').value;
-        const computerMarker = document.querySelector('input[name="computer-marker"]:checked').value;
+        const playerMarkerInput = document.querySelector('input[name="player-marker"]:checked');
+        const computerMarkerInput = document.querySelector('input[name="computer-marker"]:checked');
 
         if (playerName) {
-            initializeGame.initializePlayers(playerName, playerMarker, computerMarker);
-
-            gameBoardElement.style.visibility = "visible";
-            errorMessage.textContent = "";
+            if (playerMarkerInput && computerMarkerInput) {
+                const playerMarker = playerMarkerInput.value;
+                const computerMarker = computerMarkerInput.value;
+    
+                if (playerMarker !== computerMarker) {
+                    initializeGame.initializePlayers(playerName, playerMarker, computerMarker);
+    
+                    gameBoardElement.style.visibility = "visible";
+                    errorMessage.textContent = "";
+                } else {
+                    errorMessage.textContent = "Player and computer cannot have the same marker.";
+                }
+            } else {
+                errorMessage.textContent = "Please select a marker for both player and computer.";
+            }
         } else {
-            errorMessage.textContent = "Please enter your name";
+            errorMessage.textContent = "Please enter your name.";
         }
     };
 
@@ -317,4 +291,4 @@ const playerInputController = (function() {
     return {
         startGameClick
     };
-})();
+})();    
