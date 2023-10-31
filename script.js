@@ -241,8 +241,11 @@ const gamePresentation = (function () {
     };
 
     function showGameSetupUI() {
-        const gameSetupElement = document.querySelector("#game-setup");
-        gameSetupElement.style.visibility = "visible";
+        const boardContainer = document.querySelector(".board-container");
+        const playerForm = document.querySelector(".player-form");
+
+        boardContainer.style.display = "none";
+        playerForm.style.display = "flex";
     };
 
     return {
@@ -256,7 +259,8 @@ const gamePresentation = (function () {
 
 const playerInputController = (function() {
     const playerNameInput = document.querySelector("#player-name");
-    const gameBoardElement = document.querySelector(".game-board");
+    const boardContainer = document.querySelector(".board-container");
+    const playerForm = document.querySelector(".player-form");
     const startButton = document.querySelector("#start-button");
     const errorMessage = document.querySelector(".error-message");
 
@@ -272,8 +276,9 @@ const playerInputController = (function() {
     
                 if (playerMarker !== computerMarker) {
                     initializeGame.initializePlayers(playerName, playerMarker, computerMarker);
-    
-                    gameBoardElement.style.visibility = "visible";
+
+                    playerForm.style.display = "none"; 
+                    boardContainer.style.display = "flex";
                     errorMessage.textContent = "";
                 } else {
                     errorMessage.textContent = "Player and computer cannot have the same marker.";
