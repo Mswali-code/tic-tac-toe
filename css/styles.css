@@ -1,0 +1,121 @@
+body {
+   height: 100vh;
+   font-size: 1.2rem;
+   font-family: 'Chakra Petch', sans-serif;
+   background-color: #000008;
+}
+
+header {
+   text-align: center;
+   color: aqua;
+   font-size: 1.4rem;
+}
+
+main {
+   height: 75%;
+}
+
+.player-form {
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    font-size: 1.6rem;
+    height: 100%;
+    background-color: #02021e;
+    border-radius: 2em;
+    box-shadow: inset 0 0 12px rgb(42, 42, 94);
+}
+
+.player-input {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 3.2rem;
+    background: linear-gradient(45deg, #0074E4, #FF3366, #33AA5A);
+    background-clip: text; 
+    -webkit-background-clip: text;
+    color: transparent;
+}  
+
+#player-name {
+    border-radius: 0.6rem;
+    outline: none;
+}
+
+.player-choice-x {
+    color: aqua;
+}
+
+.or-span {
+    color: gray;
+}
+
+.player-choice-o {
+    color: rgb(80, 80, 172);
+}
+
+.start-button-container {
+    align-self: center;
+}
+
+#start-button {
+    padding: 1rem 2rem;
+    border-radius: 1.2rem;
+    background-color: rgb(80, 80, 172);
+    color: white;
+    transition: transform 0.2s;
+}
+
+#start-button:hover {
+    transform: translate(5px, -5px);
+}
+
+.board-container {
+    display: none;
+    height: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    border-radius: 2.6rem;
+    box-shadow: inset 0 0 12px rgb(42, 42, 94);
+}                                                            
+
+.game-board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 0.8rem;
+    height: 70%;
+    width: 50%;
+}
+
+.cell {
+    border-radius: 0.8rem;
+    font-size: 3rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(45deg, #0074E4, #FF3366, #33AA5A);
+}
+
+#restart-button {
+    padding: 1rem 2rem;
+    border-radius: 1.4rem;
+    background-color: gray;
+    color: white;
+    transition: transform 0.2s;
+}
+
+#restart-button:hover {
+    transform: translate(5px, -5px);
+}
+
+.result-message {
+    font-size: 1.6rem;
+    color: white;
+}
+
+footer {
+    text-align: center;
+    color: rgb(157, 148, 148);
+}
